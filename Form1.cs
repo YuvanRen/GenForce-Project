@@ -7,10 +7,13 @@ namespace GenForce
 {
     public class Form1 : Form
     {
+        private Panel mainPanel;
         private DataGridView inputDataGridView;
         private DataGridView outputDataGridView;
+        private Button addRowButton;
         private DataTable inputTable = new DataTable();
         private DataTable outputTable = new DataTable();
+        private ContextMenuStrip deleteMenu;
 
         public Form1()
         {
@@ -23,32 +26,60 @@ namespace GenForce
 
         private void InitializeComponent()
         {
+            mainPanel = new Panel();
             inputDataGridView = new DataGridView();
             outputDataGridView = new DataGridView();
+            addRowButton = new Button();
+            deleteMenu = new ContextMenuStrip();
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
             SuspendLayout();
             // 
+            // mainPanel
+            // 
+            mainPanel.Location = new Point(12, 12);
+            mainPanel.Name = "mainPanel";
+            mainPanel.Size = new Size(570, 451); // Keep size in mind 
+            mainPanel.AutoScroll = true;
+            // 
             // inputDataGridView
             // 
-            inputDataGridView.Location = new Point(12, 12);
+            inputDataGridView.ColumnHeadersHeight = 29;
+            inputDataGridView.Location = new Point(0, 0);
             inputDataGridView.Name = "inputDataGridView";
-            inputDataGridView.Size = new Size(350, 200);
+            inputDataGridView.RowHeadersWidth = 50;
+            inputDataGridView.Size = new Size(570, 451); // Keep size in mind 
             inputDataGridView.TabIndex = 0;
             inputDataGridView.CellContentClick += inputDataGridView_CellContentClick;
+            inputDataGridView.AllowUserToAddRows = false;
+            inputDataGridView.Scroll += inputDataGridView_Scroll;
             // 
             // outputDataGridView
             // 
-            outputDataGridView.Location = new Point(370, 12);
+            outputDataGridView.ColumnHeadersHeight = 29;
+            outputDataGridView.Location = new Point(747, 12);
             outputDataGridView.Name = "outputDataGridView";
-            outputDataGridView.Size = new Size(350, 200);
+            outputDataGridView.RowHeadersWidth = 51;
+            outputDataGridView.Size = new Size(441, 451);
             outputDataGridView.TabIndex = 1;
+            // 
+            // addRowButton
+            // 
+            addRowButton.Location = new Point(12, 470);
+            addRowButton.Name = "addRowButton";
+            addRowButton.Size = new Size(120, 40);
+            addRowButton.TabIndex = 2;
+            addRowButton.Text = "Add Row";
+            addRowButton.UseVisualStyleBackColor = true;
+            addRowButton.Click += new EventHandler(buttonAddRow_Click);
             // 
             // Form1
             // 
-            ClientSize = new Size(740, 230);
-            Controls.Add(inputDataGridView);
+            ClientSize = new Size(1200, 520);
+            Controls.Add(mainPanel);
+            mainPanel.Controls.Add(inputDataGridView);
             Controls.Add(outputDataGridView);
+            Controls.Add(addRowButton);
             Name = "Form1";
             Text = "Logistics Automation";
             Load += Form1_Load;
@@ -59,9 +90,60 @@ namespace GenForce
 
         private void SetupInputTable()
         {
+            inputDataGridView.ColumnHeadersHeight = 40;
             inputTable.Columns.Add("Letter");
-            inputTable.Columns.Add("Wire Size & Type");
+            inputTable.Columns.Add("Sets");
+            inputTable.Columns.Add("Times x Size");
+            inputTable.Columns.Add("Minimum Conduit");
             inputTable.Columns.Add("Length");
+
+            // Create and add ComboBox columns
+            DataGridViewComboBoxColumn metricColumn = new DataGridViewComboBoxColumn
+            {
+                Name = "Metric",
+                HeaderText = "Metric",
+                DataSource = new string[] { "AWG", "KCMIL", "MCM" }
+            };
+            DataGridViewComboBoxColumn materialColumn = new DataGridViewComboBoxColumn
+            {
+                Name = "Material",
+                HeaderText = "Material",
+                DataSource = new string[] { "CU", "AL" }
+            };
+
+            inputDataGridView.DataSource = inputTable;
+
+            // Set Width
+            inputDataGridView.Columns["Times x Size"].Width = 100;
+            inputDataGridView.Columns["Letter"].Width = 50;
+            inputDataGridView.Columns["Sets"].Width = 50;
+            inputDataGridView.Columns["Minimum Conduit"].Width = 65;
+            inputDataGridView.Columns["Length"].Width = 55;
+            
+            // Add ComboBox columns to the DataGridView at specified positions
+            inputDataGridView.Columns.Insert(3, metricColumn);
+            inputDataGridView.Columns.Insert(4, materialColumn);
+
+            // Set up the delete context menu
+            deleteMenu.Items.Add("Delete Row", null, DeleteRow);
+
+            // Add the Default Row
+
+            DataRow newRow = inputTable.NewRow();
+            inputTable.Rows.Add(newRow);
+
+            // Create the delete button
+            Button deleteButton = new Button
+            {
+                Text = "...",
+                Size = new Size(40, 20),
+                Tag = inputTable.Rows.Count + 1 // Store the row index in the Tag property
+            };
+            deleteButton.Click += DeleteButton_Click;
+
+            // Position the button
+            mainPanel.Controls.Add(deleteButton);
+            UpdateButtonPositions();
         }
 
         private void SetupOutputTable()
@@ -78,7 +160,86 @@ namespace GenForce
 
         private void inputDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // No need to handle this event for delete button
+        }
 
+        private void inputDataGridView_Scroll(object sender, ScrollEventArgs e)
+        {
+            // Update button positions when scrolling
+            UpdateButtonPositions();
+        }
+
+        private void buttonAddRow_Click(object sender, EventArgs e)
+        {
+            AddNewRow();
+        }
+
+        private void AddNewRow()
+        {
+            // Add the new row to the DataTable
+            DataRow newRow = inputTable.NewRow();
+            inputTable.Rows.Add(newRow);
+
+            // Create the delete button
+            Button deleteButton = new Button
+            {
+                Text = "...",
+                Size = new Size(40, 20),
+                Tag = inputTable.Rows.Count - 1 // Store the row index in the Tag property
+            };
+            deleteButton.Click += DeleteButton_Click;
+
+            // Position the button
+            mainPanel.Controls.Add(deleteButton);
+            UpdateButtonPositions();
+        }
+
+        private void DeleteButton_Click(object sender, EventArgs e)
+        {
+            if (sender is Button deleteButton)
+            {
+                int rowIndex = (int)deleteButton.Tag;
+                if (rowIndex >= 0 && rowIndex < inputTable.Rows.Count)
+                {
+                    inputTable.Rows.RemoveAt(rowIndex);
+                    mainPanel.Controls.Remove(deleteButton);
+                    UpdateButtonPositions();
+                }
+            }
+        }
+
+        private void UpdateButtonPositions()
+        {
+            // Update the positions of the delete buttons to match the rows
+            int buttonIndex = 0;
+            foreach (Control control in mainPanel.Controls)
+            {
+                if (control is Button deleteButton && deleteButton.Text == "...")
+                {
+                    if (buttonIndex < inputDataGridView.Rows.Count)
+                    {
+                        DataGridViewRow row = inputDataGridView.Rows[buttonIndex];
+                        Rectangle rowRect = inputDataGridView.GetRowDisplayRectangle(row.Index, true);
+                        deleteButton.Location = new Point(inputDataGridView.Location.X + inputDataGridView.Width + 5,
+                            mainPanel.AutoScrollPosition.Y + rowRect.Top);
+                        deleteButton.Tag = buttonIndex; // Update the tag with the new row index
+                    }
+                    buttonIndex++;
+                }
+            }
+        }
+
+        private void DeleteRow(object sender, EventArgs e)
+        {
+            if (deleteMenu.Tag != null)
+            {
+                int rowIndex = (int)deleteMenu.Tag;
+                if (rowIndex >= 0 && rowIndex < inputDataGridView.Rows.Count)
+                {
+                    inputDataGridView.Rows.RemoveAt(rowIndex);
+                    UpdateButtonPositions();
+                }
+            }
         }
     }
 }

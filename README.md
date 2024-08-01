@@ -6,7 +6,7 @@
 
 Implemented add and delete row buttons and table frame for user.
 Next Implementations:
-[ ] Tool bar (Save, Download, Print, Open Folder/Upload)
+* Tool bar (Save, Download, Print, Open Folder/Upload)
 * Wire Size & Type parse
 * Calculation logic
 

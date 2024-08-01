@@ -11,6 +11,7 @@ namespace GenForce
         private DataGridView inputDataGridView;
         private DataGridView outputDataGridView;
         private Button addRowButton;
+        private Button parseButton;
         private DataTable inputTable = new DataTable();
         private DataTable outputTable = new DataTable();
         private ContextMenuStrip deleteMenu;
@@ -30,6 +31,7 @@ namespace GenForce
             inputDataGridView = new DataGridView();
             outputDataGridView = new DataGridView();
             addRowButton = new Button();
+            parseButton = new Button();
             deleteMenu = new ContextMenuStrip();
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
@@ -72,6 +74,19 @@ namespace GenForce
             addRowButton.Text = "Add Row";
             addRowButton.UseVisualStyleBackColor = true;
             addRowButton.Click += new EventHandler(buttonAddRow_Click);
+
+            // 
+            // parseButton FOR DEBUGGING
+            // 
+            parseButton.Location = new Point(150, 470);
+            parseButton.Name = "parseButton";
+            parseButton.Size = new Size(120, 40);
+            parseButton.TabIndex = 3;
+            parseButton.Text = "Parse Times x Size";
+            parseButton.UseVisualStyleBackColor = true;
+            parseButton.Click += new EventHandler(buttonParse_Click);
+
+
             // 
             // Form1
             // 
@@ -80,6 +95,7 @@ namespace GenForce
             mainPanel.Controls.Add(inputDataGridView);
             Controls.Add(outputDataGridView);
             Controls.Add(addRowButton);
+            Controls.Add(parseButton);
             Name = "Form1";
             Text = "Logistics Automation";
             Load += Form1_Load;
@@ -119,7 +135,7 @@ namespace GenForce
             inputDataGridView.Columns["Sets"].Width = 50;
             inputDataGridView.Columns["Minimum Conduit"].Width = 65;
             inputDataGridView.Columns["Length"].Width = 55;
-            
+
             // Add ComboBox columns to the DataGridView at specified positions
             inputDataGridView.Columns.Insert(3, metricColumn);
             inputDataGridView.Columns.Insert(4, materialColumn);
@@ -238,6 +254,31 @@ namespace GenForce
                 {
                     inputDataGridView.Rows.RemoveAt(rowIndex);
                     UpdateButtonPositions();
+                }
+            }
+        }
+
+        private (string times, string size) ParseTimesXSize(string timesXSize)
+        {
+            var parts = timesXSize.Split('x');
+            if (parts.Length == 2)
+            {
+                var times = parts[0].Trim();
+                var size = parts[1].Trim();
+                return (times, size);
+            }
+            return (null, null);
+        }
+
+        private void buttonParse_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow row in inputTable.Rows)
+            {
+                string timesXSize = row["Times x Size"].ToString();
+                var parsedResult = ParseTimesXSize(timesXSize);
+                if (parsedResult.times != null && parsedResult.size != null)
+                {
+                    MessageBox.Show($"Times: {parsedResult.times}, Size: {parsedResult.size}");
                 }
             }
         }

@@ -153,7 +153,7 @@ namespace GenForce
             {
                 Text = "...",
                 Size = new Size(40, 20),
-                Tag = inputTable.Rows.Count + 1 // Store the row index in the Tag property
+                Tag = inputTable.Rows.Count // Store the row index in the Tag property
             };
             deleteButton.Click += DeleteButton_Click;
 
@@ -258,29 +258,74 @@ namespace GenForce
             }
         }
 
-        private (string times, string size) ParseTimesXSize(string timesXSize)
+        //Parses the Times x Size  and returns it, if empty returns nothing 
+        private (int times, string size) ParseTimesXSize(string timesXSize)
         {
             var parts = timesXSize.Split('x');
             if (parts.Length == 2)
             {
-                var times = parts[0].Trim();
+                var times = Convert.ToInt32(parts[0].Trim()); // Gotta make sure this is an integer else throw error
+
                 var size = parts[1].Trim();
+
                 return (times, size);
             }
-            return (null, null);
+            return (0, null);
         }
 
+        //Calls the parsing function and displays the parse - 1st update
+        //Gets the other needed values
         private void buttonParse_Click(object sender, EventArgs e)
         {
             foreach (DataRow row in inputTable.Rows)
             {
-                string timesXSize = row["Times x Size"].ToString();
-                var parsedResult = ParseTimesXSize(timesXSize);
-                if (parsedResult.times != null && parsedResult.size != null)
+                int sets;
+                bool num = true;
+                int rowIndex = inputTable.Rows.IndexOf(row);
+                DataGridViewRow dataGridViewRow = inputDataGridView.Rows[rowIndex];
+
+                if (row["Sets"] == DBNull.Value)
                 {
-                    MessageBox.Show($"Times: {parsedResult.times}, Size: {parsedResult.size}");
+                    sets = 1;
+                }
+                else
+                {
+                    try
+                    {
+                        sets = Convert.ToInt32(row["Sets"]);
+                    }
+                    catch (FormatException ex)
+                    {   
+                        dataGridViewRow.Cells["Sets"].Style.BackColor = Color.Red;
+                        MessageBox.Show(ex.Message + " Must be an Integer! ");
+                        
+                        num = false;
+                    }
+
+                    if (num)
+                    {
+                        sets = Convert.ToInt32(row["Sets"]);
+                        dataGridViewRow.Cells["Sets"].Style.BackColor = Color.White;
+                    }
+                    else
+                    {
+                        sets = 1;
+                    }
+                }
+
+                string timesXSize = row["Times x Size"].ToString();
+               // string metric = row["Metric"].ToString();
+               // string material = row["Material"].ToString(); // , Metric: {metric}, Material: {material}
+
+                var parsedResult = ParseTimesXSize(timesXSize);
+
+                if (parsedResult.times != 0 && parsedResult.size != null)
+                {
+                    MessageBox.Show($"Times: {parsedResult.times}, Size: {parsedResult.size}, Sets: {sets}");
                 }
             }
         }
+
+
     }
 }

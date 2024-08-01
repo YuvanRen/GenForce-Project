@@ -41,7 +41,7 @@ namespace GenForce
             // 
             mainPanel.Location = new Point(12, 12);
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(570, 451); // Keep size in mind 
+            mainPanel.Size = new Size(670, 451); // Keep size in mind 
             mainPanel.AutoScroll = true;
             // 
             // inputDataGridView

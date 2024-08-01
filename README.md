@@ -14,6 +14,6 @@ Next Implementations:
 Implemented function to check each cell for the right format in the input of the user.
 Red highlight the cell with the error.
 Next Implementation:
-*Tool bar
-*Full Calculation
-*Dark mode / Settings
+* Tool bar
+* Full Calculation
+* Dark mode / Settings

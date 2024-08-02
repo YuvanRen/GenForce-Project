@@ -1,12 +1,15 @@
-using System;
+﻿using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+
 
 namespace GenForce
 {
     public class Form1 : Form
     {
+        private ToolBar toolbar;
+  
         private Panel mainPanel;
         private DataGridView inputDataGridView;
         private DataGridView outputDataGridView;
@@ -27,6 +30,8 @@ namespace GenForce
 
         private void InitializeComponent()
         {
+            toolbar = new ToolBar();
+
             mainPanel = new Panel();
             inputDataGridView = new DataGridView();
             outputDataGridView = new DataGridView();
@@ -36,10 +41,14 @@ namespace GenForce
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
             SuspendLayout();
+
+            Controls.Add(toolbar.ToolStrip); //ToolStrip
+            toolbar.ToolStrip.Dock = DockStyle.Top;
+
             // 
             // mainPanel
             // 
-            mainPanel.Location = new Point(12, 12);
+            mainPanel.Location = new Point(12, toolbar.ToolStrip.Height + 10);
             mainPanel.Name = "mainPanel";
             mainPanel.Size = new Size(670, 451); // Keep size in mind 
             mainPanel.AutoScroll = true;
@@ -59,7 +68,7 @@ namespace GenForce
             // outputDataGridView
             // 
             outputDataGridView.ColumnHeadersHeight = 29;
-            outputDataGridView.Location = new Point(747, 12);
+            outputDataGridView.Location = new Point(747, toolbar.ToolStrip.Height + 10);
             outputDataGridView.Name = "outputDataGridView";
             outputDataGridView.RowHeadersWidth = 51;
             outputDataGridView.Size = new Size(441, 451);
@@ -67,7 +76,7 @@ namespace GenForce
             // 
             // addRowButton
             // 
-            addRowButton.Location = new Point(12, 470);
+            addRowButton.Location = new Point(12, 500);
             addRowButton.Name = "addRowButton";
             addRowButton.Size = new Size(120, 40);
             addRowButton.TabIndex = 2;
@@ -78,7 +87,7 @@ namespace GenForce
             // 
             // parseButton FOR DEBUGGING
             // 
-            parseButton.Location = new Point(150, 470);
+            parseButton.Location = new Point(150, 500);
             parseButton.Name = "parseButton";
             parseButton.Size = new Size(120, 40);
             parseButton.TabIndex = 3;
@@ -90,7 +99,7 @@ namespace GenForce
             // 
             // Form1
             // 
-            ClientSize = new Size(1200, 520);
+            ClientSize = new Size(1200, 550);
             Controls.Add(mainPanel);
             mainPanel.Controls.Add(inputDataGridView);
             Controls.Add(outputDataGridView);
@@ -295,10 +304,10 @@ namespace GenForce
                         sets = Convert.ToInt32(row["Sets"]);
                     }
                     catch (FormatException ex)
-                    {   
+                    {
                         dataGridViewRow.Cells["Sets"].Style.BackColor = Color.Red;
                         MessageBox.Show(ex.Message + " Must be an Integer! ");
-                        
+
                         num = false;
                     }
 
@@ -314,8 +323,8 @@ namespace GenForce
                 }
 
                 string timesXSize = row["Times x Size"].ToString();
-               // string metric = row["Metric"].ToString();
-               // string material = row["Material"].ToString(); // , Metric: {metric}, Material: {material}
+                // string metric = row["Metric"].ToString();
+                // string material = row["Material"].ToString(); // , Metric: {metric}, Material: {material}
 
                 var parsedResult = ParseTimesXSize(timesXSize);
 
@@ -329,3 +338,4 @@ namespace GenForce
 
     }
 }
+

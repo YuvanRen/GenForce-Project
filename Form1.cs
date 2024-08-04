@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ namespace GenForce
         private DataTable inputTable = new DataTable();
         private DataTable outputTable = new DataTable();
         private ContextMenuStrip deleteMenu;
+        private int deleteButton_Count = 0;
 
         public Form1()
         {
@@ -30,7 +32,7 @@ namespace GenForce
 
         private void InitializeComponent()
         {
-            toolbar = new ToolBar();
+            toolbar = new ToolBar(this);
 
             mainPanel = new Panel();
             inputDataGridView = new DataGridView();
@@ -171,6 +173,28 @@ namespace GenForce
             UpdateButtonPositions();
         }
 
+        public void ResetTable()
+        {
+            inputTable.Clear(); // Clear all data from the DataTable
+            inputTable.Rows.Clear(); // Clear all rows from the DataTable
+
+            List<Button> buttonsToRemove = new List<Button>(); //Keeping track of all buttons
+            foreach (Control control in mainPanel.Controls)
+            {
+                if (control is Button deleteButton && deleteButton.Text == "...")
+                {
+                    buttonsToRemove.Add(deleteButton);
+                }
+            }
+
+            for (int i = 0; i < buttonsToRemove.Count; i++) //removes deletebuttons
+            {
+                mainPanel.Controls.Remove(buttonsToRemove[i]);
+            }
+
+            AddNewRow(); //invoked once to return to default state
+        }
+
         private void SetupOutputTable()
         {
             // Example columns for output table
@@ -213,6 +237,8 @@ namespace GenForce
                 Tag = inputTable.Rows.Count - 1 // Store the row index in the Tag property
             };
             deleteButton.Click += DeleteButton_Click;
+
+            deleteButton_Count += 1; // counts all delete buttons
 
             // Position the button
             mainPanel.Controls.Add(deleteButton);

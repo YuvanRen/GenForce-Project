@@ -17,6 +17,7 @@ namespace GenForce
         private Button parseButton;
         private DataTable inputTable = new DataTable();
         private DataTable outputTable = new DataTable();
+        private System.ComponentModel.IContainer components;
         private ContextMenuStrip deleteMenu;
 
         public Form1()
@@ -30,49 +31,60 @@ namespace GenForce
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             toolbar = new ToolBar();
-
             mainPanel = new Panel();
             inputDataGridView = new DataGridView();
             outputDataGridView = new DataGridView();
             addRowButton = new Button();
             parseButton = new Button();
-            deleteMenu = new ContextMenuStrip();
+            deleteMenu = new ContextMenuStrip(components);
+            mainPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
             SuspendLayout();
-
-            Controls.Add(toolbar.ToolStrip); //ToolStrip
-            toolbar.ToolStrip.Dock = DockStyle.Top;
-
+            // 
+            // toolbar
+            // 
+            toolbar.ClientSize = new Size(282, 253);
+            toolbar.Location = new Point(224, 224);
+            toolbar.Name = "toolbar";
+            toolbar.Visible = false;
             // 
             // mainPanel
             // 
-            mainPanel.Location = new Point(12, toolbar.ToolStrip.Height + 10);
-            mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(670, 451); // Keep size in mind 
             mainPanel.AutoScroll = true;
+            mainPanel.Controls.Add(inputDataGridView);
+            mainPanel.Location = new Point(12, 25);
+            mainPanel.Name = "mainPanel";
+            mainPanel.Size = new Size(575, 451);
+            mainPanel.TabIndex = 1;
             // 
             // inputDataGridView
             // 
+            inputDataGridView.AllowUserToAddRows = false;
             inputDataGridView.ColumnHeadersHeight = 29;
             inputDataGridView.Location = new Point(0, 0);
             inputDataGridView.Name = "inputDataGridView";
-            inputDataGridView.RowHeadersWidth = 50;
-            inputDataGridView.Size = new Size(570, 451); // Keep size in mind 
+            inputDataGridView.RowHeadersWidth = 4;
+            inputDataGridView.Size = new Size(525, 451);
             inputDataGridView.TabIndex = 0;
-            inputDataGridView.CellContentClick += inputDataGridView_CellContentClick;
-            inputDataGridView.AllowUserToAddRows = false;
             inputDataGridView.Scroll += inputDataGridView_Scroll;
             // 
             // outputDataGridView
             // 
-            outputDataGridView.ColumnHeadersHeight = 29;
-            outputDataGridView.Location = new Point(747, toolbar.ToolStrip.Height + 10);
+            dataGridViewCellStyle1.Font = new Font("Arial", 8F, FontStyle.Bold);
+            outputDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            outputDataGridView.ColumnHeadersHeight = 40;
+            outputDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            outputDataGridView.Location = new Point(595, 25);
             outputDataGridView.Name = "outputDataGridView";
-            outputDataGridView.RowHeadersWidth = 51;
-            outputDataGridView.Size = new Size(441, 451);
+            outputDataGridView.RowHeadersWidth = 4;
+            outputDataGridView.Size = new Size(548, 451);
             outputDataGridView.TabIndex = 1;
+            
             // 
             // addRowButton
             // 
@@ -82,10 +94,9 @@ namespace GenForce
             addRowButton.TabIndex = 2;
             addRowButton.Text = "Add Row";
             addRowButton.UseVisualStyleBackColor = true;
-            addRowButton.Click += new EventHandler(buttonAddRow_Click);
-
+            addRowButton.Click += buttonAddRow_Click;
             // 
-            // parseButton FOR DEBUGGING
+            // parseButton
             // 
             parseButton.Location = new Point(150, 500);
             parseButton.Name = "parseButton";
@@ -93,24 +104,29 @@ namespace GenForce
             parseButton.TabIndex = 3;
             parseButton.Text = "Material Wizard";
             parseButton.UseVisualStyleBackColor = true;
-            parseButton.Click += new EventHandler(buttonParse_Click);
-
-
+            parseButton.Click += buttonParse_Click;
+            // 
+            // deleteMenu
+            // 
+            deleteMenu.ImageScalingSize = new Size(20, 20);
+            deleteMenu.Name = "deleteMenu";
+            deleteMenu.Size = new Size(61, 4);
             // 
             // Form1
             // 
             ClientSize = new Size(1200, 550);
             Controls.Add(mainPanel);
-            mainPanel.Controls.Add(inputDataGridView);
             Controls.Add(outputDataGridView);
             Controls.Add(addRowButton);
             Controls.Add(parseButton);
             Name = "Form1";
             Text = "Logistics Automation";
             Load += Form1_Load;
+            mainPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).EndInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         private void SetupInputTable()
@@ -157,27 +173,105 @@ namespace GenForce
             DataRow newRow = inputTable.NewRow();
             inputTable.Rows.Add(newRow);
 
-            // Create the delete button
-            Button deleteButton = new Button
-            {
-                Text = "...",
-                Size = new Size(40, 20),
-                Tag = inputTable.Rows.Count // Store the row index in the Tag property
-            };
-            deleteButton.Click += DeleteButton_Click;
-
-            // Position the button
-            mainPanel.Controls.Add(deleteButton);
-            UpdateButtonPositions();
         }
 
         private void SetupOutputTable()
         {
-            // Example columns for output table
-            outputTable.Columns.Add("Result");
-            outputTable.Columns.Add("Details");
-        }
+            // Define columns similar to the image
+            outputTable.Columns.Add("Column1");
+            outputTable.Columns.Add("1\"");
+            outputTable.Columns.Add("1 1/2\"");
+            outputTable.Columns.Add("2\"");
+            outputTable.Columns.Add("2 1/2\"");
+            outputTable.Columns.Add("3\"");
+            outputTable.Columns.Add("4\"");
 
+         
+            // Example data
+            outputTable.Rows.Add("EMT Pipe");
+            outputTable.Rows.Add("EMT Connector compression");
+            outputTable.Rows.Add("EMT coupling compression");
+            outputTable.Rows.Add("Grounding bushing");
+            outputTable.Rows.Add("Plastic bushing");
+            outputTable.Rows.Add("Cowboy strap");
+            outputTable.Rows.Add("EMT kindorf strap");
+            outputTable.Rows.Add("Myers hub");
+            outputTable.Rows.Add("EMT 90 deg elbow");
+            outputTable.Rows.Add("EMT 45 deg elbow");
+            outputTable.Rows.Add("EMT 22 1/2 deg elbow");
+            outputTable.Rows.Add("EMT 15 deg elbow");
+            outputTable.Rows.Add("Threded Mogule LB");
+            outputTable.Rows.Add("Threded Type C");
+            outputTable.Rows.Add("Threded Type LB");
+            outputTable.Rows.Add("Threded Type LR");
+            outputTable.Rows.Add("Threded Type LL");
+            outputTable.Rows.Add("Threded T");
+            outputTable.Rows.Add("Sealtite Metal NON metalic");
+            outputTable.Rows.Add("Sealtite connector starit NM");
+            outputTable.Rows.Add("Sealtite connector 90 deg NM");
+            outputTable.Rows.Add("Rigid couplings");
+            outputTable.Rows.Add("Threded nipple");
+            outputTable.Rows.Add("EMT setscrew connector");
+            outputTable.Rows.Add("EMT setscrew coupling");
+            outputTable.Rows.Add("PVC coupling");
+            outputTable.Rows.Add("PVC female adapter");
+            outputTable.Rows.Add("PVC connectors with locknyts");
+            outputTable.Rows.Add("PVC pipe");
+            outputTable.Rows.Add("PVC glue");
+            outputTable.Rows.Add("PVC 90 deg elbow");
+            outputTable.Rows.Add("PVC 45 deg elbow");
+            outputTable.Rows.Add("PVC expention couplings");
+            outputTable.Rows.Add("Rigid pipe");
+            outputTable.Rows.Add("Kindorf 1/2");
+            outputTable.Rows.Add("Kindorf L-brackets");
+            outputTable.Rows.Add("Kindorf 1 1/2");
+            outputTable.Rows.Add("Kindorf L-45deg");
+            outputTable.Rows.Add("Kindor 3");
+            outputTable.Rows.Add("Pulling Lube");
+            outputTable.Rows.Add("1/4 nuts");
+            outputTable.Rows.Add("Tape-BOY");
+            outputTable.Rows.Add("1/4/20x1 bolts");
+            outputTable.Rows.Add("Tape- BLUE, RED");
+            outputTable.Rows.Add("1/4x1 1/4 washers");
+            outputTable.Rows.Add("Tape-black");
+            outputTable.Rows.Add("1/4 spring nuts");
+            outputTable.Rows.Add("Tape-white");
+            outputTable.Rows.Add("3/8 nuts");
+            outputTable.Rows.Add("Tape-green");
+            outputTable.Rows.Add("3/8x1 bolts");
+            outputTable.Rows.Add("Number booklet 0-9");
+            outputTable.Rows.Add("3/8x1 1/4 washers");
+            outputTable.Rows.Add("3/8 spring nuts");
+            outputTable.Rows.Add("Roof chocks");
+            outputTable.Rows.Add("PV wire Black");
+            outputTable.Rows.Add("3/8 expansion anchors");
+            outputTable.Rows.Add("PV wire Red");
+            outputTable.Rows.Add("The Wrap plastic 11\"");
+            outputTable.Rows.Add("#6 green");
+            outputTable.Rows.Add("lugs 1/0");
+            outputTable.Rows.Add("1/2 anchors x3\"");
+            outputTable.Rows.Add("3/8 threaded rod");
+            outputTable.Rows.Add("2gang bell deep + voer 1\"ko");
+            outputTable.Rows.Add("1\"-1/2\" threaded reducers");
+            outputTable.Rows.Add("1 1/2\"-1' threaded reducers");
+            outputTable.Rows.Add("2\"-1/2\" threaded reducers");
+            outputTable.Rows.Add("2 1/2\"-1' threaded reducers");
+            outputTable.Rows.Add("Wiring Trough, Type 3R");
+            outputTable.Rows.Add("Pull box 3R");
+            outputTable.Rows.Add("U PIPE beam clamps");
+            
+
+            // Set outputDataGridView DataSource
+            outputDataGridView.DataSource = outputTable;
+            outputDataGridView.Columns["Column1"].Width = 200;
+            outputDataGridView.Columns["1\""].Width = 55;
+            outputDataGridView.Columns["1 1/2\""].Width = 55;
+            outputDataGridView.Columns["2\""].Width = 55;
+            outputDataGridView.Columns["2 1/2\""].Width = 55;
+            outputDataGridView.Columns["3\""].Width = 55;
+            outputDataGridView.Columns["4\""].Width = 55;
+
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             // Add initial data or any required setup here
@@ -210,7 +304,7 @@ namespace GenForce
             {
                 Text = "...",
                 Size = new Size(40, 20),
-                Tag = inputTable.Rows.Count - 1 // Store the row index in the Tag property
+                Tag = inputTable.Rows.Count // Store the row index in the Tag property
             };
             deleteButton.Click += DeleteButton_Click;
 
@@ -328,8 +422,8 @@ namespace GenForce
                 }
 
                 timesXSize = row["Times x Size"].ToString();
-                metric = dataGridViewRow.Cells["Metric"].Value?.ToString() ?? "Unknown";
-                material = dataGridViewRow.Cells["Material"].Value?.ToString() ?? "Unknown";
+                metric = dataGridViewRow.Cells["Metric"].Value.ToString();
+                material = dataGridViewRow.Cells["Material"].Value.ToString();
 
                 var parsedResult = ParseTimesXSize(timesXSize);
 

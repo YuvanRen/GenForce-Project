@@ -17,3 +17,11 @@ Next Implementation:
 * Tool bar
 * Full Calculation
 * Dark mode / Settings
+
+## 8/7/2024
+Finished first table logic and changed some of the UI colors.<br/>
+Finished setting up all materials on second table.
+Next Implementation:
+* Merge with tool bar branch
+* Second table logic
+* Change GUI for better look

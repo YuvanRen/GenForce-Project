@@ -286,10 +286,16 @@ namespace GenForce
         //Gets the other needed values
         private void buttonParse_Click(object sender, EventArgs e)
         {
+            // Dictionary to group rows by their attributes (size, metric, material)
+            var groupedRows = new Dictionary<(string size, string metric, string material), List<DataRow>>();
+
             foreach (DataRow row in inputTable.Rows)
             {
                 int sets;
                 bool num = true;
+                string timesXSize;
+                string metric;
+                string material;
                 int rowIndex = inputTable.Rows.IndexOf(row);
                 DataGridViewRow dataGridViewRow = inputDataGridView.Rows[rowIndex];
 
@@ -307,7 +313,6 @@ namespace GenForce
                     {
                         dataGridViewRow.Cells["Sets"].Style.BackColor = Color.Red;
                         MessageBox.Show(ex.Message + " Must be an Integer! ");
-
                         num = false;
                     }
 
@@ -322,20 +327,48 @@ namespace GenForce
                     }
                 }
 
-                string timesXSize = row["Times x Size"].ToString();
-                // string metric = row["Metric"].ToString();
-                // string material = row["Material"].ToString(); // , Metric: {metric}, Material: {material}
+                timesXSize = row["Times x Size"].ToString();
+                metric = dataGridViewRow.Cells["Metric"].Value?.ToString() ?? "Unknown";
+                material = dataGridViewRow.Cells["Material"].Value?.ToString() ?? "Unknown";
 
                 var parsedResult = ParseTimesXSize(timesXSize);
 
                 if (parsedResult.times != 0 && parsedResult.size != null)
                 {
-                    MessageBox.Show($"Times: {parsedResult.times}, Size: {parsedResult.size}, Sets: {sets}");
+                    var key = (parsedResult.size, metric, material);
+
+                    if (!groupedRows.ContainsKey(key))
+                    {
+                        groupedRows[key] = new List<DataRow>();
+                    }
+
+                    groupedRows[key].Add(row);
                 }
             }
+
+            // Perform calculations on grouped rows
+            foreach (var key in groupedRows.Keys)
+            {
+                string size = key.size;
+                string metric = key.metric;
+                string material = key.material;
+                List<DataRow> rows = groupedRows[key];
+
+                // Calculation: Multiply sets, times, and length for each row and sum them for only grouped rows
+                double total = 0;
+                foreach (var row in rows)
+                {
+                    int sets = Convert.ToInt32(row["Sets"]);
+                    var parsedResult = ParseTimesXSize(row["Times x Size"].ToString());
+                    int times = parsedResult.times;
+                    double length = Convert.ToDouble(row["Length"]);
+                    total += sets * times * length;
+                }
+                //Change this to put on out put table
+                MessageBox.Show($"Total: {total} of Size: {size} Metric: {metric}, Material: {material}");
+            }
+
         }
-
-
     }
 }
 

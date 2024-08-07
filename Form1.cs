@@ -91,7 +91,7 @@ namespace GenForce
             parseButton.Name = "parseButton";
             parseButton.Size = new Size(120, 40);
             parseButton.TabIndex = 3;
-            parseButton.Text = "Parse Times x Size";
+            parseButton.Text = "Calculate";
             parseButton.UseVisualStyleBackColor = true;
             parseButton.Click += new EventHandler(buttonParse_Click);
 

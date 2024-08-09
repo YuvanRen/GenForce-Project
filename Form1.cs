@@ -10,7 +10,7 @@ namespace GenForce
 {
     public class Form1 : MaterialForm
     {
-	private ToolBar toolbar;
+	    private ToolBar toolbar;
 
         private Panel mainPanel;
         private DataGridView inputDataGridView;
@@ -41,7 +41,7 @@ namespace GenForce
         private void InitializeComponent()
         {
             toolbar = new ToolBar(this);
-	    components = new System.ComponentModel.Container();
+	        components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
 
@@ -56,7 +56,7 @@ namespace GenForce
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
             SuspendLayout();
 
-	    Controls.Add(toolbar.ToolStrip); //ToolStrip
+	        Controls.Add(toolbar.ToolStrip); //ToolStrip
             toolbar.ToolStrip.Dock = DockStyle.Top;
 
             // 
@@ -64,7 +64,7 @@ namespace GenForce
             // 
             mainPanel.AutoScroll = true;
             mainPanel.Controls.Add(inputDataGridView);
-            mainPanel.Location = new Point(12, toolbar.ToolStrip.Height + 10);
+            mainPanel.Location = new Point(12, toolbar.ToolStrip.Height + 75);
             mainPanel.Name = "mainPanel";
             mainPanel.Size = new Size(670, 451);
             mainPanel.TabIndex = 1;
@@ -98,7 +98,7 @@ namespace GenForce
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             outputDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             outputDataGridView.ColumnHeadersHeight = 40;
-            outputDataGridView.Location = new Point(747, toolbar.ToolStrip.Height + 10);
+            outputDataGridView.Location = new Point(747, toolbar.ToolStrip.Height + 75);
             outputDataGridView.Name = "outputDataGridView";
             outputDataGridView.RowHeadersWidth = 4;
             outputDataGridView.Size = new Size(554, 451);
@@ -111,7 +111,7 @@ namespace GenForce
             addRowButton.Depth = 0;
             addRowButton.HighEmphasis = true;
             addRowButton.Icon = null;
-            addRowButton.Location = new Point(12, 530);
+            addRowButton.Location = new Point(12, 565);
             addRowButton.Margin = new Padding(4, 6, 4, 6);
             addRowButton.MouseState = MouseState.HOVER;
             addRowButton.Name = "addRowButton";
@@ -130,7 +130,7 @@ namespace GenForce
             parseButton.Depth = 0;
             parseButton.HighEmphasis = true;
             parseButton.Icon = null;
-            parseButton.Location = new Point(150, 530);
+            parseButton.Location = new Point(150, 565);
             parseButton.Margin = new Padding(4, 6, 4, 6);
             parseButton.MouseState = MouseState.HOVER;
             parseButton.Name = "parseButton";
@@ -153,7 +153,7 @@ namespace GenForce
             AutoSize = true;
             ClientSize = new Size(1200, 600);
             Controls.Add(mainPanel);
-	    mainPanel.Controls.Add(inputDataGridView); //double check
+	        mainPanel.Controls.Add(inputDataGridView); //double check
             Controls.Add(outputDataGridView);
             Controls.Add(addRowButton);
             Controls.Add(parseButton);

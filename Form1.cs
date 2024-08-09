@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +10,8 @@ namespace GenForce
 {
     public class Form1 : MaterialForm
     {
+	private ToolBar toolBar;
+
         private Panel mainPanel;
         private DataGridView inputDataGridView;
         private DataGridView outputDataGridView;
@@ -18,6 +21,7 @@ namespace GenForce
         private DataTable outputTable = new DataTable();
         private System.ComponentModel.IContainer components;
         private ContextMenuStrip deleteMenu;
+        private int deleteButton_Count = 0;
 
         public Form1()
         {
@@ -36,9 +40,11 @@ namespace GenForce
 
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            toolbar = new ToolBar(this);
+	    components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+
             mainPanel = new Panel();
             inputDataGridView = new DataGridView();
             outputDataGridView = new DataGridView();
@@ -49,14 +55,18 @@ namespace GenForce
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
             SuspendLayout();
+
+	    Controls.Add(toolbar.ToolStrip); //ToolStrip
+            toolbar.ToolStrip.Dock = DockStyle.Top;
+
             // 
             // mainPanel
             // 
             mainPanel.AutoScroll = true;
             mainPanel.Controls.Add(inputDataGridView);
-            mainPanel.Location = new Point(12, 70);
+            mainPanel.Location = new Point(12, toolbar.ToolStrip.Height + 10);
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(575, 451);
+            mainPanel.Size = new Size(670, 451);
             mainPanel.TabIndex = 1;
             // 
             // inputDataGridView
@@ -74,7 +84,7 @@ namespace GenForce
             inputDataGridView.Location = new Point(0, 0);
             inputDataGridView.Name = "inputDataGridView";
             inputDataGridView.RowHeadersWidth = 4;
-            inputDataGridView.Size = new Size(532, 451);
+            inputDataGridView.Size = new Size(570, 451);
             inputDataGridView.TabIndex = 0;
             // 
             // outputDataGridView
@@ -88,7 +98,7 @@ namespace GenForce
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             outputDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             outputDataGridView.ColumnHeadersHeight = 40;
-            outputDataGridView.Location = new Point(595, 70);
+            outputDataGridView.Location = new Point(747, toolbar.ToolStrip.Height + 10);
             outputDataGridView.Name = "outputDataGridView";
             outputDataGridView.RowHeadersWidth = 4;
             outputDataGridView.Size = new Size(554, 451);
@@ -143,6 +153,7 @@ namespace GenForce
             AutoSize = true;
             ClientSize = new Size(1200, 600);
             Controls.Add(mainPanel);
+	    mainPanel.Controls.Add(inputDataGridView); //double check
             Controls.Add(outputDataGridView);
             Controls.Add(addRowButton);
             Controls.Add(parseButton);
@@ -200,6 +211,28 @@ namespace GenForce
             // Add the Default Row
             DataRow newRow = inputTable.NewRow();
             inputTable.Rows.Add(newRow);
+        }
+
+        public void ResetTable()
+        {
+            inputTable.Clear(); // Clear all data from the DataTable
+            inputTable.Rows.Clear(); // Clear all rows from the DataTable
+
+            List<Button> buttonsToRemove = new List<Button>(); //Keeping track of all buttons
+            foreach (Control control in mainPanel.Controls)
+            {
+                if (control is Button deleteButton && deleteButton.Text == "...")
+                {
+                    buttonsToRemove.Add(deleteButton);
+                }
+            }
+
+            for (int i = 0; i < buttonsToRemove.Count; i++) //removes deletebuttons
+            {
+                mainPanel.Controls.Remove(buttonsToRemove[i]);
+            }
+
+            AddNewRow(); //invoked once to return to default state
         }
 
         private void SetupOutputTable()
@@ -321,6 +354,8 @@ namespace GenForce
                 Tag = inputTable.Rows.Count - 1 // Store the row index in the Tag property
             };
             deleteButton.Click += DeleteButton_Click;
+
+            deleteButton_Count += 1; // counts all delete buttons
 
             // Position the button
             mainPanel.Controls.Add(deleteButton);

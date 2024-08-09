@@ -10,7 +10,7 @@ namespace GenForce
 {
     public class Form1 : MaterialForm
     {
-	private ToolBar toolBar;
+	private ToolBar toolbar;
 
         private Panel mainPanel;
         private DataGridView inputDataGridView;

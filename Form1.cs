@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ namespace GenForce
 {
     public class Form1 : MaterialForm
     {
+        private ToolBar toolbar;
         private Panel mainPanel;
         private DataGridView inputDataGridView;
         private DataGridView outputDataGridView;
@@ -18,6 +20,14 @@ namespace GenForce
         private DataTable outputTable = new DataTable();
         private System.ComponentModel.IContainer components;
         private ContextMenuStrip deleteMenu;
+        private int deleteButton_Count = 0;
+        private MaterialButton priceWizardButton;
+
+
+        // New components for TabControl
+        private TabControl tabControl;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
 
         public Form1()
         {
@@ -28,36 +38,92 @@ namespace GenForce
             materialSkinManager.ColorScheme = new ColorScheme(Primary.DeepOrange900, Primary.Grey700, Primary.Grey200, Accent.LightBlue200, TextShade.WHITE);
 
             InitializeComponent();
+
+            // Enable double buffering for smoother tab switching
+            EnableDoubleBuffering(tabControl);
+
+            // Hook into the tab control's events for smoother transitions
+            tabControl.Selecting += new TabControlCancelEventHandler(tabControl_Selecting);
+            tabControl.Selected += new TabControlEventHandler(tabControl_Selected);
+
             SetupInputTable();
             SetupOutputTable();
             inputDataGridView.DataSource = inputTable;
             outputDataGridView.DataSource = outputTable;
         }
 
+        private void EnableDoubleBuffering(Control control)
+        {
+            System.Reflection.PropertyInfo doubleBufferPropertyInfo =
+                control.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            doubleBufferPropertyInfo.SetValue(control, true, null);
+        }
+
+        private void tabControl_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            foreach (Control control in e.TabPage.Controls)
+            {
+                control.Visible = false;
+            }
+        }
+
+        private void tabControl_Selected(object sender, TabControlEventArgs e)
+        {
+            foreach (Control control in e.TabPage.Controls)
+            {
+                control.Visible = true;
+            }
+        }
+
+
         private void InitializeComponent()
         {
+            toolbar = new ToolBar(this);
             components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+
+            // Initialize TabControl and TabPages
+            tabControl = new TabControl();
+            tabPage1 = new TabPage("Wires");
+            tabPage2 = new TabPage("Material");
+
             mainPanel = new Panel();
             inputDataGridView = new DataGridView();
             outputDataGridView = new DataGridView();
             addRowButton = new MaterialButton();
             parseButton = new MaterialButton();
             deleteMenu = new ContextMenuStrip(components);
+            priceWizardButton = new MaterialButton();
+
             mainPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
             SuspendLayout();
+
+            // TabControl setup
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.TabPages.Add(tabPage1);
+            tabControl.TabPages.Add(tabPage2);
+
+
+            // Add TabControl to the Form
+            Controls.Add(tabControl);
+
+            // Setup toolbar
+            Controls.Add(toolbar.ToolStrip); // ToolStrip
+            toolbar.ToolStrip.Dock = DockStyle.Top;
+
             // 
             // mainPanel
             // 
             mainPanel.AutoScroll = true;
             mainPanel.Controls.Add(inputDataGridView);
-            mainPanel.Location = new Point(12, 70);
+            mainPanel.Location = new Point(12, 25); // Adjusted to move closer to the top
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(575, 451);
+            mainPanel.Size = new Size(670,400); // Adjust size as needed
             mainPanel.TabIndex = 1;
+
             // 
             // inputDataGridView
             // 
@@ -74,8 +140,9 @@ namespace GenForce
             inputDataGridView.Location = new Point(0, 0);
             inputDataGridView.Name = "inputDataGridView";
             inputDataGridView.RowHeadersWidth = 4;
-            inputDataGridView.Size = new Size(532, 451);
+            inputDataGridView.Size = new Size(531, 400); // Adjust size as needed
             inputDataGridView.TabIndex = 0;
+
             // 
             // outputDataGridView
             // 
@@ -88,11 +155,12 @@ namespace GenForce
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             outputDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             outputDataGridView.ColumnHeadersHeight = 40;
-            outputDataGridView.Location = new Point(595, 70);
+            outputDataGridView.Location = new Point(10, 10); // Adjusted to be inside the second tab
             outputDataGridView.Name = "outputDataGridView";
             outputDataGridView.RowHeadersWidth = 4;
-            outputDataGridView.Size = new Size(554, 451);
+            outputDataGridView.Size = new Size(752, 400);
             outputDataGridView.TabIndex = 1;
+
             // 
             // addRowButton
             // 
@@ -101,7 +169,7 @@ namespace GenForce
             addRowButton.Depth = 0;
             addRowButton.HighEmphasis = true;
             addRowButton.Icon = null;
-            addRowButton.Location = new Point(12, 530);
+            addRowButton.Location = new Point(12, 440); // Adjusted to move closer
             addRowButton.Margin = new Padding(4, 6, 4, 6);
             addRowButton.MouseState = MouseState.HOVER;
             addRowButton.Name = "addRowButton";
@@ -112,6 +180,7 @@ namespace GenForce
             addRowButton.Type = MaterialButton.MaterialButtonType.Contained;
             addRowButton.UseAccentColor = false;
             addRowButton.Click += buttonAddRow_Click;
+
             // 
             // parseButton
             // 
@@ -120,7 +189,7 @@ namespace GenForce
             parseButton.Depth = 0;
             parseButton.HighEmphasis = true;
             parseButton.Icon = null;
-            parseButton.Location = new Point(150, 530);
+            parseButton.Location = new Point(120, 440); // Adjusted to move closer
             parseButton.Margin = new Padding(4, 6, 4, 6);
             parseButton.MouseState = MouseState.HOVER;
             parseButton.Name = "parseButton";
@@ -131,24 +200,55 @@ namespace GenForce
             parseButton.Type = MaterialButton.MaterialButtonType.Contained;
             parseButton.UseAccentColor = false;
             parseButton.Click += buttonParse_Click;
+
+            // 
+            // priceWizardButton (Add this part)
+            // 
+            priceWizardButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            priceWizardButton.Density = MaterialButton.MaterialButtonDensity.Default;
+            priceWizardButton.Depth = 0;
+            priceWizardButton.HighEmphasis = true;
+            priceWizardButton.Icon = null;
+            priceWizardButton.Location = new Point(12, 420); 
+            priceWizardButton.Margin = new Padding(4, 6, 4, 6);
+            priceWizardButton.MouseState = MouseState.HOVER;
+            priceWizardButton.Name = "priceWizardButton";
+            priceWizardButton.NoAccentTextColor = Color.Empty;
+            priceWizardButton.Size = new Size(151, 36);
+            priceWizardButton.TabIndex = 4;
+            priceWizardButton.Text = "Price Wizard";
+            priceWizardButton.Type = MaterialButton.MaterialButtonType.Contained;
+            priceWizardButton.UseAccentColor = false;
+            priceWizardButton.Click += buttonPriceWizard_Click;
+
             // 
             // deleteMenu
             // 
             deleteMenu.ImageScalingSize = new Size(20, 20);
             deleteMenu.Name = "deleteMenu";
             deleteMenu.Size = new Size(61, 4);
+
             // 
             // Form1
             // 
             AutoSize = true;
             ClientSize = new Size(1200, 600);
-            Controls.Add(mainPanel);
-            Controls.Add(outputDataGridView);
-            Controls.Add(addRowButton);
-            Controls.Add(parseButton);
             Name = "Form1";
             Text = "GenForce-SW";
             Load += Form1_Load;
+
+            // Add existing components to the first TabPage
+            tabPage1.Controls.Add(mainPanel);
+            tabPage1.Controls.Add(addRowButton);
+            tabPage1.Controls.Add(parseButton);
+
+            // Add the outputDataGridView to the second TabPage
+            tabPage2.Controls.Add(outputDataGridView);
+            tabPage2.Controls.Add(priceWizardButton);
+
+            inputDataGridView.EditMode = DataGridViewEditMode.EditOnEnter;
+            outputDataGridView.EditMode = DataGridViewEditMode.EditOnEnter;
+
             mainPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).EndInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).EndInit();
@@ -202,16 +302,40 @@ namespace GenForce
             inputTable.Rows.Add(newRow);
         }
 
+        public void ResetTable()
+        {
+            inputTable.Clear(); // Clear all data from the DataTable
+            inputTable.Rows.Clear(); // Clear all rows from the DataTable
+
+            List<Button> buttonsToRemove = new List<Button>(); // Keeping track of all buttons
+            foreach (Control control in mainPanel.Controls)
+            {
+                if (control is Button deleteButton && deleteButton.Text == "...")
+                {
+                    buttonsToRemove.Add(deleteButton);
+                }
+            }
+
+            for (int i = 0; i < buttonsToRemove.Count; i++) // removes deletebuttons
+            {
+                mainPanel.Controls.Remove(buttonsToRemove[i]);
+            }
+
+            AddNewRow(); // invoked once to return to default state
+        }
+
         private void SetupOutputTable()
         {
             // Define columns similar to the image
             outputTable.Columns.Add("Column1");
+            outputTable.Columns.Add("BARCODE");
             outputTable.Columns.Add("1\"");
             outputTable.Columns.Add("1 1/2\"");
             outputTable.Columns.Add("2\"");
             outputTable.Columns.Add("2 1/2\"");
             outputTable.Columns.Add("3\"");
             outputTable.Columns.Add("4\"");
+            outputTable.Columns.Add("Pricing");
 
             // Example data
             outputTable.Rows.Add("EMT Pipe");
@@ -321,6 +445,8 @@ namespace GenForce
                 Tag = inputTable.Rows.Count - 1 // Store the row index in the Tag property
             };
             deleteButton.Click += DeleteButton_Click;
+
+            deleteButton_Count += 1; // counts all delete buttons
 
             // Position the button
             mainPanel.Controls.Add(deleteButton);
@@ -473,8 +599,16 @@ namespace GenForce
                     total += sets * times * length;
                 }
                 // Change this to put on output table
-                outputTable.Rows.Add($"{total}' of Size: {size} Metric: {metric}, Material: {material}");
+                outputTable.Rows.Add($"{total}' of Size: {size} {metric} {material}");
             }
         }
+
+        // Material pricing
+        private void buttonPriceWizard_Click(object sender, EventArgs e)
+        {
+            // Implement what should happen when the "Price Wizard" button is clicked
+            MessageBox.Show("Price Wizard button clicked!", "Price Wizard");
+        }
+
     }
 }

@@ -12,7 +12,6 @@ namespace GenForce
         private ToolStripDropDownButton edit_Button;
         private ToolStripButton restart_Button;
         private Form1 mainForm;
-
         public ToolStrip ToolStrip => toolStrip; // Expose ToolStrip
 
 
@@ -42,7 +41,7 @@ namespace GenForce
             file_Button.DropDownItems.Add("New", null, newItem_Click);
             file_Button.DropDownItems.Add("Open", null, openFile_Click);
             file_Button.DropDownItems.Add("Save", null, saveFile_Click);
-            file_Button.DropDownItems.Add("Save As", null, saveFileAs_Click);
+            file_Button.DropDownItems.Add("Save as", null, saveFileAs_Click);
             file_Button.DropDownItems.Add(new ToolStripSeparator());
             file_Button.DropDownItems.Add("Exit", null, exitApp_Click);
 
@@ -64,25 +63,36 @@ namespace GenForce
         // ------------------------------------------------------------------------- File functions
         private void newItem_Click(object sender, EventArgs e)
         {
-  
+
             MessageBox.Show("New menu item clicked");
         }
 
         private void openFile_Click(object sender, EventArgs e) // Requires the logic aspect of the table to be completed in order for me to specify what gets opened
         {
-            string dir_Downloads = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads"; 
+            string dir_Downloads = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads";
             Process.Start("explorer.exe", dir_Downloads);
         }
 
         private void saveFile_Click(object sender, EventArgs e)
         {
-          
+
             MessageBox.Show("Save menu item clicked");
         }
 
+        // TODO: give option to print input or output table
         private void saveFileAs_Click(object sender, EventArgs e)
         {
- 
+            DataGridView selectedDgv = mainForm.inputDataGridView;
+
+            if (selectedDgv != null)
+            {
+                printInputTable printer = new printInputTable(selectedDgv);
+                printer.Print();
+            }
+            else
+            {
+                MessageBox.Show("Please select a DataGridView to print.");
+            }
             MessageBox.Show("Save menu item clicked");
         }
 
@@ -118,8 +128,8 @@ namespace GenForce
             //Compilier assigns the most appropriate datatype with the "var" keyword, kinda crazy ngl
 
             var result = MessageBox.Show("Are you sure you want to restart the application?", "Restart Application", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            
-            if(result == DialogResult.Yes)
+
+            if (result == DialogResult.Yes)
             {
                 Application.Restart();
             }

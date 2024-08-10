@@ -136,12 +136,12 @@ namespace GenForce
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             inputDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            inputDataGridView.ColumnHeadersHeight = 29;
+            inputDataGridView.ColumnHeadersHeight = 40;
             inputDataGridView.Location = new Point(0, 0);
             inputDataGridView.Name = "inputDataGridView";
-            inputDataGridView.RowHeadersWidth = 4;
-            inputDataGridView.Size = new Size(531, 400); // Adjust size as needed
+            inputDataGridView.Size = new Size(527, 400); // Adjust size as needed
             inputDataGridView.TabIndex = 0;
+            inputDataGridView.RowHeadersVisible = false;
 
             // Output DataGridView setup
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -155,7 +155,6 @@ namespace GenForce
             outputDataGridView.ColumnHeadersHeight = 40;
             outputDataGridView.Location = new Point(10, 10); // Adjusted to be inside the second tab
             outputDataGridView.Name = "outputDataGridView";
-            outputDataGridView.RowHeadersWidth = 4;
             outputDataGridView.Size = new Size(752, 400);
             outputDataGridView.TabIndex = 1;
 

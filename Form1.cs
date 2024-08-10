@@ -6,15 +6,15 @@ using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
 
+
 namespace GenForce
 {
     public class Form1 : MaterialForm
     {
-	    private ToolBar toolbar;
-
+        private ToolBar toolbar;
         private Panel mainPanel;
-        private DataGridView inputDataGridView;
-        private DataGridView outputDataGridView;
+        public DataGridView inputDataGridView;
+        public DataGridView outputDataGridView;
         private MaterialButton addRowButton;
         private MaterialButton parseButton;
         private DataTable inputTable = new DataTable();
@@ -25,6 +25,7 @@ namespace GenForce
 
         public Form1()
         {
+
             // Initialize MaterialSkinManager
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
@@ -36,15 +37,15 @@ namespace GenForce
             SetupOutputTable();
             inputDataGridView.DataSource = inputTable;
             outputDataGridView.DataSource = outputTable;
+
         }
 
         private void InitializeComponent()
         {
             toolbar = new ToolBar(this);
-	        components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-
             mainPanel = new Panel();
             inputDataGridView = new DataGridView();
             outputDataGridView = new DataGridView();
@@ -56,9 +57,8 @@ namespace GenForce
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
             SuspendLayout();
 
-	        Controls.Add(toolbar.ToolStrip); //ToolStrip
+            Controls.Add(toolbar.ToolStrip);
             toolbar.ToolStrip.Dock = DockStyle.Top;
-
             // 
             // mainPanel
             // 
@@ -153,7 +153,7 @@ namespace GenForce
             AutoSize = true;
             ClientSize = new Size(1200, 600);
             Controls.Add(mainPanel);
-	        mainPanel.Controls.Add(inputDataGridView); //double check
+            mainPanel.Controls.Add(inputDataGridView); //double check
             Controls.Add(outputDataGridView);
             Controls.Add(addRowButton);
             Controls.Add(parseButton);
@@ -169,7 +169,7 @@ namespace GenForce
 
         private void SetupInputTable()
         {
-            inputDataGridView.ColumnHeadersHeight = 40;
+            //inputDataGridView.ColumnHeadersHeight = 40;
             inputTable.Columns.Add("Letter");
             inputTable.Columns.Add("Sets");
             inputTable.Columns.Add("Times x Size");
@@ -184,6 +184,7 @@ namespace GenForce
                 DataSource = new string[] { "AWG", "KCMIL", "MCM" },
                 FlatStyle = FlatStyle.Popup // Ensures smooth drop-down appearance
             };
+
             DataGridViewComboBoxColumn materialColumn = new DataGridViewComboBoxColumn
             {
                 Name = "Material",
@@ -192,18 +193,25 @@ namespace GenForce
                 FlatStyle = FlatStyle.Popup // Ensures smooth drop-down appearance
             };
 
+
             inputDataGridView.DataSource = inputTable;
 
             // Set Width
-            inputDataGridView.Columns["Times x Size"].Width = 100;
             inputDataGridView.Columns["Letter"].Width = 50;
             inputDataGridView.Columns["Sets"].Width = 50;
+            inputDataGridView.Columns["Times x Size"].Width = 100;
             inputDataGridView.Columns["Minimum Conduit"].Width = 70;
             inputDataGridView.Columns["Length"].Width = 55;
+
+
 
             // Add ComboBox columns to the DataGridView at specified positions
             inputDataGridView.Columns.Insert(3, metricColumn);
             inputDataGridView.Columns.Insert(4, materialColumn);
+
+
+
+
 
             // Set up the delete context menu
             deleteMenu.Items.Add("Delete Row", null, DeleteRow);
@@ -211,28 +219,6 @@ namespace GenForce
             // Add the Default Row
             DataRow newRow = inputTable.NewRow();
             inputTable.Rows.Add(newRow);
-        }
-
-        public void ResetTable()
-        {
-            inputTable.Clear(); // Clear all data from the DataTable
-            inputTable.Rows.Clear(); // Clear all rows from the DataTable
-
-            List<Button> buttonsToRemove = new List<Button>(); //Keeping track of all buttons
-            foreach (Control control in mainPanel.Controls)
-            {
-                if (control is Button deleteButton && deleteButton.Text == "...")
-                {
-                    buttonsToRemove.Add(deleteButton);
-                }
-            }
-
-            for (int i = 0; i < buttonsToRemove.Count; i++) //removes deletebuttons
-            {
-                mainPanel.Controls.Remove(buttonsToRemove[i]);
-            }
-
-            AddNewRow(); //invoked once to return to default state
         }
 
         private void SetupOutputTable()
@@ -321,6 +307,8 @@ namespace GenForce
 
             // Set outputDataGridView DataSource
             outputDataGridView.DataSource = outputTable;
+
+            // Set the width of each column
             outputDataGridView.Columns["Column1"].Width = 200;
             outputDataGridView.Columns["1\""].Width = 55;
             outputDataGridView.Columns["1 1/2\""].Width = 55;
@@ -330,12 +318,35 @@ namespace GenForce
             outputDataGridView.Columns["4\""].Width = 55;
         }
 
+        public void ResetTable()
+        {
+            inputTable.Clear(); // Clear all data from the DataTable
+            inputTable.Rows.Clear(); // Clear all rows from the DataTable
+
+            List<Button> buttonsToRemove = new List<Button>(); //Keeping track of all buttons
+            foreach (Control control in mainPanel.Controls)
+            {
+                if (control is Button deleteButton && deleteButton.Text == "...")
+                {
+                    buttonsToRemove.Add(deleteButton);
+                }
+            }
+
+            for (int i = 0; i < buttonsToRemove.Count; i++) //removes deletebuttons
+            {
+                mainPanel.Controls.Remove(buttonsToRemove[i]);
+            }
+
+            AddNewRow(); //invoked once to return to default state
+        }
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             // Add initial data or any required setup here
         }
 
-        private void buttonAddRow_Click(object sender, EventArgs e)
+        private void buttonAddRow_Click(object? sender, EventArgs e)
         {
             AddNewRow();
         }
@@ -427,7 +438,7 @@ namespace GenForce
 
         // Calls the parsing function and displays the parse - 1st update
         // Gets the other needed values
-        private void buttonParse_Click(object sender, EventArgs e)
+        private void buttonParse_Click(object? sender, EventArgs e)
         {
             // Dictionary to group rows by their attributes (size, metric, material)
             var groupedRows = new Dictionary<(string size, string metric, string material), List<DataRow>>();
@@ -511,5 +522,9 @@ namespace GenForce
                 outputTable.Rows.Add($"{total}' of Size: {size} Metric: {metric}, Material: {material}");
             }
         }
+
+        // Component to print input table
+
     }
+
 }

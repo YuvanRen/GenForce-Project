@@ -25,3 +25,12 @@ Next Implementation:
 * Merge with tool bar branch
 * Second table logic
 * Change GUI for better look
+
+## 8/9/2024
+Split the tables in 2 accessible tabs<br/>
+Smoother transitions/functionality
+Can now use save as to print/save
+Next Implementation:
+* Material correlation logic
+* Pricing from data base
+* More GUI features

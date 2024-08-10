@@ -27,8 +27,7 @@ Next Implementation:
 * Change GUI for better look
 
 ## 8/9/2024
-Split the tables in 2 accessible tabs<br/>
-Smoother transitions/functionality
+Split the tables in 2 accessible tabs, Smoother transitions/functionality<br/>
 Can now use save as to print/save
 Next Implementation:
 * Material correlation logic

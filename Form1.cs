@@ -11,9 +11,9 @@ namespace GenForce
     public class Form1 : MaterialForm
     {
         private ToolBar toolbar;
-        private Panel mainPanel;
-        private DataGridView inputDataGridView;
-        private DataGridView outputDataGridView;
+        public Panel mainPanel;
+        public DataGridView inputDataGridView;
+        public DataGridView outputDataGridView;
         private MaterialButton addRowButton;
         private MaterialButton parseButton;
         private DataTable inputTable = new DataTable();
@@ -21,8 +21,8 @@ namespace GenForce
         private System.ComponentModel.IContainer components;
         private ContextMenuStrip deleteMenu;
         private int deleteButton_Count = 0;
-        private MaterialButton priceWizardButton;
 
+        private MaterialButton priceWizardButton;
 
         // New components for TabControl
         private TabControl tabControl;
@@ -50,6 +50,9 @@ namespace GenForce
             SetupOutputTable();
             inputDataGridView.DataSource = inputTable;
             outputDataGridView.DataSource = outputTable;
+
+            // Enable double buffering on the DataGridView to improve performance
+            EnableDoubleBuffering(outputDataGridView);
         }
 
         private void EnableDoubleBuffering(Control control)
@@ -75,10 +78,10 @@ namespace GenForce
             }
         }
 
-
         private void InitializeComponent()
         {
             toolbar = new ToolBar(this);
+
             components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
@@ -101,11 +104,12 @@ namespace GenForce
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).BeginInit();
             SuspendLayout();
 
+            Controls.Add(toolbar.ToolStrip); //ToolStrip
+
             // TabControl setup
             tabControl.Dock = DockStyle.Fill;
             tabControl.TabPages.Add(tabPage1);
             tabControl.TabPages.Add(tabPage2);
-
 
             // Add TabControl to the Form
             Controls.Add(tabControl);
@@ -114,56 +118,52 @@ namespace GenForce
             Controls.Add(toolbar.ToolStrip); // ToolStrip
             toolbar.ToolStrip.Dock = DockStyle.Top;
 
-            // 
-            // mainPanel
-            // 
+            // Main panel setup
             mainPanel.AutoScroll = true;
             mainPanel.Controls.Add(inputDataGridView);
-            mainPanel.Location = new Point(12, 25); // Adjusted to move closer to the top
+            mainPanel.Location = new Point(12, 20); // Adjusted to move closer to the top
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(670,400); // Adjust size as needed
+            mainPanel.Size = new Size(670, 400); // Adjust size as needed
             mainPanel.TabIndex = 1;
 
-            // 
-            // inputDataGridView
-            // 
+            // Input DataGridView setup
             inputDataGridView.AllowUserToAddRows = false;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
             dataGridViewCellStyle1.Font = new Font("Times New Roman", 10F, FontStyle.Bold);
             dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Control; // Set to the same as normal background
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.WindowText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             inputDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            inputDataGridView.ColumnHeadersHeight = 29;
+            inputDataGridView.ColumnHeadersHeight = 40;
             inputDataGridView.Location = new Point(0, 0);
             inputDataGridView.Name = "inputDataGridView";
-            inputDataGridView.RowHeadersWidth = 4;
-            inputDataGridView.Size = new Size(531, 400); // Adjust size as needed
+            inputDataGridView.Size = new Size(527, 400); // Adjust size as needed
             inputDataGridView.TabIndex = 0;
+            inputDataGridView.RowHeadersVisible = false;
 
-            // 
-            // outputDataGridView
-            // 
+            // Output DataGridView setup
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Control;
             dataGridViewCellStyle2.Font = new Font("Times New Roman", 10F, FontStyle.Bold);
             dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Control; // Set to the same as normal background
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.WindowText;
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             outputDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             outputDataGridView.ColumnHeadersHeight = 40;
             outputDataGridView.Location = new Point(10, 10); // Adjusted to be inside the second tab
             outputDataGridView.Name = "outputDataGridView";
-            outputDataGridView.RowHeadersWidth = 4;
             outputDataGridView.Size = new Size(752, 400);
             outputDataGridView.TabIndex = 1;
 
-            // 
-            // addRowButton
-            // 
+            // Optimize DataGridView settings for smooth scrolling
+            outputDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            outputDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            outputDataGridView.RowHeadersVisible = false;
+
+            // Add Row Button setup
             addRowButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             addRowButton.Density = MaterialButton.MaterialButtonDensity.Default;
             addRowButton.Depth = 0;
@@ -181,9 +181,7 @@ namespace GenForce
             addRowButton.UseAccentColor = false;
             addRowButton.Click += buttonAddRow_Click;
 
-            // 
-            // parseButton
-            // 
+            // Parse Button setup
             parseButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             parseButton.Density = MaterialButton.MaterialButtonDensity.Default;
             parseButton.Depth = 0;
@@ -201,15 +199,13 @@ namespace GenForce
             parseButton.UseAccentColor = false;
             parseButton.Click += buttonParse_Click;
 
-            // 
-            // priceWizardButton (Add this part)
-            // 
+            // Price Wizard Button setup
             priceWizardButton.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             priceWizardButton.Density = MaterialButton.MaterialButtonDensity.Default;
             priceWizardButton.Depth = 0;
             priceWizardButton.HighEmphasis = true;
             priceWizardButton.Icon = null;
-            priceWizardButton.Location = new Point(12, 420); 
+            priceWizardButton.Location = new Point(12, 420);
             priceWizardButton.Margin = new Padding(4, 6, 4, 6);
             priceWizardButton.MouseState = MouseState.HOVER;
             priceWizardButton.Name = "priceWizardButton";
@@ -221,18 +217,21 @@ namespace GenForce
             priceWizardButton.UseAccentColor = false;
             priceWizardButton.Click += buttonPriceWizard_Click;
 
-            // 
-            // deleteMenu
-            // 
+            // Delete Menu setup
             deleteMenu.ImageScalingSize = new Size(20, 20);
             deleteMenu.Name = "deleteMenu";
             deleteMenu.Size = new Size(61, 4);
 
-            // 
-            // Form1
-            // 
+            // Form setup
             AutoSize = true;
             ClientSize = new Size(1200, 600);
+
+            Controls.Add(mainPanel);
+            mainPanel.Controls.Add(inputDataGridView);
+            Controls.Add(outputDataGridView);
+            Controls.Add(addRowButton);
+            Controls.Add(parseButton);
+
             Name = "Form1";
             Text = "GenForce-SW";
             Load += Form1_Load;
@@ -249,6 +248,9 @@ namespace GenForce
             inputDataGridView.EditMode = DataGridViewEditMode.EditOnEnter;
             outputDataGridView.EditMode = DataGridViewEditMode.EditOnEnter;
 
+            inputDataGridView.CellClick += (s, e) => { inputDataGridView.ClearSelection(); };
+            outputDataGridView.CellClick += (s, e) => { outputDataGridView.ClearSelection(); };
+
             mainPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)inputDataGridView).EndInit();
             ((System.ComponentModel.ISupportInitialize)outputDataGridView).EndInit();
@@ -258,7 +260,6 @@ namespace GenForce
 
         private void SetupInputTable()
         {
-            inputDataGridView.ColumnHeadersHeight = 40;
             inputTable.Columns.Add("Letter");
             inputTable.Columns.Add("Sets");
             inputTable.Columns.Add("Times x Size");
@@ -271,22 +272,23 @@ namespace GenForce
                 Name = "Metric",
                 HeaderText = "Metric",
                 DataSource = new string[] { "AWG", "KCMIL", "MCM" },
-                FlatStyle = FlatStyle.Popup // Ensures smooth drop-down appearance
+                FlatStyle = FlatStyle.Flat // Ensures smooth drop-down appearance
             };
+
             DataGridViewComboBoxColumn materialColumn = new DataGridViewComboBoxColumn
             {
                 Name = "Material",
                 HeaderText = "Material",
                 DataSource = new string[] { "CU", "AL" },
-                FlatStyle = FlatStyle.Popup // Ensures smooth drop-down appearance
+                FlatStyle = FlatStyle.Flat // Ensures smooth drop-down appearance
             };
 
             inputDataGridView.DataSource = inputTable;
 
             // Set Width
-            inputDataGridView.Columns["Times x Size"].Width = 100;
             inputDataGridView.Columns["Letter"].Width = 50;
             inputDataGridView.Columns["Sets"].Width = 50;
+            inputDataGridView.Columns["Times x Size"].Width = 100;
             inputDataGridView.Columns["Minimum Conduit"].Width = 70;
             inputDataGridView.Columns["Length"].Width = 55;
 
@@ -299,7 +301,7 @@ namespace GenForce
 
             // Add the Default Row
             DataRow newRow = inputTable.NewRow();
-            inputTable.Rows.Add(newRow);
+            AddNewRow();
         }
 
         public void ResetTable()
@@ -308,6 +310,7 @@ namespace GenForce
             inputTable.Rows.Clear(); // Clear all rows from the DataTable
 
             List<Button> buttonsToRemove = new List<Button>(); // Keeping track of all buttons
+
             foreach (Control control in mainPanel.Controls)
             {
                 if (control is Button deleteButton && deleteButton.Text == "...")
@@ -316,7 +319,7 @@ namespace GenForce
                 }
             }
 
-            for (int i = 0; i < buttonsToRemove.Count; i++) // removes deletebuttons
+            for (int i = 0; i < buttonsToRemove.Count; i++) // removes delete buttons
             {
                 mainPanel.Controls.Remove(buttonsToRemove[i]);
             }
@@ -412,6 +415,8 @@ namespace GenForce
 
             // Set outputDataGridView DataSource
             outputDataGridView.DataSource = outputTable;
+
+            // Set the width of each column
             outputDataGridView.Columns["Column1"].Width = 200;
             outputDataGridView.Columns["1\""].Width = 55;
             outputDataGridView.Columns["1 1/2\""].Width = 55;
@@ -426,34 +431,51 @@ namespace GenForce
             // Add initial data or any required setup here
         }
 
-        private void buttonAddRow_Click(object sender, EventArgs e)
+        public void DeleteRow(object sender, EventArgs e)
+        {
+            if (deleteMenu.Tag != null)
+            {
+                int rowIndex = (int)deleteMenu.Tag;
+                if (rowIndex >= 0 && rowIndex < inputDataGridView.Rows.Count)
+                {
+                    inputDataGridView.Rows.RemoveAt(rowIndex);
+                }
+            }
+        }
+        private void buttonAddRow_Click(object? sender, EventArgs e)
         {
             AddNewRow();
         }
 
-        private void AddNewRow()
+        public void AddNewRow()
         {
             // Add the new row to the DataTable
             DataRow newRow = inputTable.NewRow();
             inputTable.Rows.Add(newRow);
 
-            // Create the delete button
-            Button deleteButton = new Button
+            // Only create the delete button if there are rows
+            if (inputDataGridView.Rows.Count > 0)
             {
-                Text = "...",
-                Size = new Size(40, 20),
-                Tag = inputTable.Rows.Count - 1 // Store the row index in the Tag property
-            };
-            deleteButton.Click += DeleteButton_Click;
+                // Create the delete button
+                Button deleteButton = new Button
+                {
+                    Text = "...",
+                    Size = new Size(40, 20),
+                    Tag = inputTable.Rows.Count - 1 // Store the row index in the Tag property
+                };
+                deleteButton.Click += DeleteButton_Click;
 
-            deleteButton_Count += 1; // counts all delete buttons
+                deleteButton_Count += 1; // counts all delete buttons
 
-            // Position the button
-            mainPanel.Controls.Add(deleteButton);
-            UpdateButtonPositions();
+                // Position the button relative to the newly added row
+                mainPanel.Controls.Add(deleteButton);
+                UpdateButtonPositions();
+            }
         }
 
-        private void DeleteButton_Click(object sender, EventArgs e)
+
+        //Handler for when ... it clicked
+        public void DeleteButton_Click(object sender, EventArgs e)
         {
             if (sender is Button deleteButton)
             {
@@ -467,9 +489,8 @@ namespace GenForce
             }
         }
 
-        private void UpdateButtonPositions()
+        public void UpdateButtonPositions()
         {
-            // Update the positions of the delete buttons to match the rows
             int buttonIndex = 0;
             foreach (Control control in mainPanel.Controls)
             {
@@ -479,49 +500,68 @@ namespace GenForce
                     {
                         DataGridViewRow row = inputDataGridView.Rows[buttonIndex];
                         Rectangle rowRect = inputDataGridView.GetRowDisplayRectangle(row.Index, true);
+
+                        // Correctly position the button aligned with the row, not the header
                         deleteButton.Location = new Point(inputDataGridView.Location.X + inputDataGridView.Width + 5,
-                            mainPanel.AutoScrollPosition.Y + rowRect.Top);
-                        deleteButton.Tag = buttonIndex; // Update the tag with the new row index
+                                                          mainPanel.AutoScrollPosition.Y + rowRect.Top + row.Height / 2 - deleteButton.Height / 2);
+
+                        // Update the tag with the current row index
+                        deleteButton.Tag = buttonIndex;
+
+                        buttonIndex++;
                     }
-                    buttonIndex++;
+                    else
+                    {
+                        // If there's an extra button, remove it
+                        mainPanel.Controls.Remove(deleteButton);
+                        deleteButton.Dispose();
+                    }
                 }
             }
         }
 
-        private void DeleteRow(object sender, EventArgs e)
+        private (int times, string size) ParseTimesXSize(string timesXSize, DataGridViewCell cell)
         {
-            if (deleteMenu.Tag != null)
+            if (string.IsNullOrWhiteSpace(timesXSize))
             {
-                int rowIndex = (int)deleteMenu.Tag;
-                if (rowIndex >= 0 && rowIndex < inputDataGridView.Rows.Count)
-                {
-                    inputDataGridView.Rows.RemoveAt(rowIndex);
-                    UpdateButtonPositions();
-                }
+                cell.Style.BackColor = Color.Red;
+                MessageBox.Show("The 'Times x Size' field cannot be empty.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return (0, null);
             }
-        }
 
-        // Parses the Times x Size and returns it, if empty returns nothing 
-        private (int times, string size) ParseTimesXSize(string timesXSize)
-        {
             var parts = timesXSize.Split('x');
-            if (parts.Length == 2)
+            if (parts.Length != 2)
             {
-                var times = Convert.ToInt32(parts[0].Trim()); // Gotta make sure this is an integer else throw error
-
-                var size = parts[1].Trim();
-
-                return (times, size);
+                cell.Style.BackColor = Color.Red;
+                MessageBox.Show("The 'Times x Size' format is incorrect. It should be in the format 'Times x Size' (e.g., '3 x 12').", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return (0, null);
             }
-            return (0, null);
+
+            if (!int.TryParse(parts[0].Trim(), out int times))
+            {
+                cell.Style.BackColor = Color.Red;
+                MessageBox.Show("The 'Times' part of 'Times x Size' must be an integer.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return (0, null);
+            }
+
+            var size = parts[1].Trim();
+            if (string.IsNullOrWhiteSpace(size))
+            {
+                cell.Style.BackColor = Color.Red;
+                MessageBox.Show("The 'Size' part of 'Times x Size' cannot be empty.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return (0, null);
+            }
+
+            cell.Style.BackColor = Color.White; // Reset background color if no error
+            return (times, size);
         }
 
-        // Calls the parsing function and displays the parse - 1st update
-        // Gets the other needed values
-        private void buttonParse_Click(object sender, EventArgs e)
+        // Calls Parsing
+        private void buttonParse_Click(object? sender, EventArgs e)
         {
             // Dictionary to group rows by their attributes (size, metric, material)
             var groupedRows = new Dictionary<(string size, string metric, string material), List<DataRow>>();
+            bool allFieldsValid = true;
 
             foreach (DataRow row in inputTable.Rows)
             {
@@ -530,9 +570,11 @@ namespace GenForce
                 string timesXSize;
                 string metric;
                 string material;
+                int length;
                 int rowIndex = inputTable.Rows.IndexOf(row);
                 DataGridViewRow dataGridViewRow = inputDataGridView.Rows[rowIndex];
 
+                // Handle 'Sets' column
                 if (row["Sets"] == DBNull.Value)
                 {
                     sets = 1;
@@ -546,7 +588,7 @@ namespace GenForce
                     catch (FormatException ex)
                     {
                         dataGridViewRow.Cells["Sets"].Style.BackColor = Color.Red;
-                        MessageBox.Show(ex.Message + " Must be an Integer! ");
+                        MessageBox.Show(ex.Message + " Must be an Integer!");
                         num = false;
                     }
 
@@ -555,17 +597,61 @@ namespace GenForce
                         sets = Convert.ToInt32(row["Sets"]);
                         dataGridViewRow.Cells["Sets"].Style.BackColor = Color.White;
                     }
-                    else
-                    {
-                        sets = 1;
-                    }
                 }
 
                 timesXSize = row["Times x Size"].ToString();
-                metric = dataGridViewRow.Cells["Metric"].Value.ToString();
-                material = dataGridViewRow.Cells["Material"].Value.ToString();
+                var timesXSizeCell = dataGridViewRow.Cells["Times x Size"];
 
-                var parsedResult = ParseTimesXSize(timesXSize);
+                // This does error handling for this cell
+                var parsedResult = ParseTimesXSize(timesXSize, timesXSizeCell);
+
+                // Handle 'Metric' column
+                metric = dataGridViewRow.Cells["Metric"].Value?.ToString();
+                if (string.IsNullOrWhiteSpace(metric))
+                {
+                    dataGridViewRow.Cells["Metric"].Style.BackColor = Color.Red;
+                    MessageBox.Show($"Row {rowIndex + 1}: 'Metric' cannot be empty.");
+                    allFieldsValid = false;
+                }
+                else
+                {
+                    dataGridViewRow.Cells["Metric"].Style.BackColor = Color.White;
+                }
+
+                // Handle 'Material' column
+                material = dataGridViewRow.Cells["Material"].Value?.ToString();
+                if (string.IsNullOrWhiteSpace(material))
+                {
+                    dataGridViewRow.Cells["Material"].Style.BackColor = Color.Red;
+                    MessageBox.Show($"Row {rowIndex + 1}: 'Material' cannot be empty.");
+                    allFieldsValid = false;
+                }
+                else
+                {
+                    dataGridViewRow.Cells["Material"].Style.BackColor = Color.White;
+                }
+
+                // Handle 'Length' column
+                if (row["Length"] == DBNull.Value)
+                {
+                    dataGridViewRow.Cells["Length"].Style.BackColor = Color.Red;
+                    MessageBox.Show($"Row {rowIndex + 1}: 'Length' cannot be empty.");
+                    allFieldsValid = false;
+                }
+                else
+                {
+                    try
+                    {
+                        length = Convert.ToInt32(row["Length"]);
+                        dataGridViewRow.Cells["Length"].Style.BackColor = Color.White;
+                    }
+                    catch (FormatException ex)
+                    {
+                        dataGridViewRow.Cells["Length"].Style.BackColor = Color.Red;
+                        MessageBox.Show(ex.Message + " Must be an Integer!");
+                        allFieldsValid = false;
+                    }
+                }
 
                 if (parsedResult.times != 0 && parsedResult.size != null)
                 {
@@ -580,7 +666,21 @@ namespace GenForce
                 }
             }
 
-            // Perform calculations on grouped rows
+            // Call the calculation function only if all fields are valid
+            if (allFieldsValid)
+            {
+                PerformCalculations(groupedRows);
+            }
+            else
+            {
+                MessageBox.Show("Please correct the highlighted fields before proceeding.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+
+        // Function to perform calculations on grouped rows
+        private void PerformCalculations(Dictionary<(string size, string metric, string material), List<DataRow>> groupedRows)
+        {
             foreach (var key in groupedRows.Keys)
             {
                 string size = key.size;
@@ -592,23 +692,27 @@ namespace GenForce
                 double total = 0;
                 foreach (var row in rows)
                 {
+                    int rowIndex = inputTable.Rows.IndexOf(row);
+                    DataGridViewRow dataGridViewRow = inputDataGridView.Rows[rowIndex];
                     int sets = Convert.ToInt32(row["Sets"]);
-                    var parsedResult = ParseTimesXSize(row["Times x Size"].ToString());
+                    var parsedResult = ParseTimesXSize(row["Times x Size"].ToString(), dataGridViewRow.Cells["Times x Size"]);
                     int times = parsedResult.times;
                     double length = Convert.ToDouble(row["Length"]);
                     total += sets * times * length;
                 }
-                // Change this to put on output table
+                // Add the result to the output table
                 outputTable.Rows.Add($"{total}' of Size: {size} {metric} {material}");
             }
         }
 
+
         // Material pricing
         private void buttonPriceWizard_Click(object sender, EventArgs e)
         {
-            // Implement what should happen when the "Price Wizard" button is clicked
-            MessageBox.Show("Price Wizard button clicked!", "Price Wizard");
-        }
+            // Create material calculation instance and call for pricing calculation
+            MaterialPricing matWizard = new MaterialPricing();
+            matWizard.MaterialCaulculation();
 
+        }
     }
 }

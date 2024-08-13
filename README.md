@@ -37,7 +37,7 @@ Next Implementation:
 ## 8/12/2024
 Tool Bars new now opens a new window, save will save the file, and delete row/add row work accordingly.<br/>
 Drop Down menu and instant click acess instead of needing to double click<br/>
-Completed error handling for app crashes (need unit tests to look for others)
+Completed error handling for app crashes (need unit tests to look for others)<br/>
 Next Implementation:
 * Data base check for pricing
 * Animation for pressed button

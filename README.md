@@ -33,3 +33,11 @@ Next Implementation:
 * Material correlation logic
 * Pricing from data base
 * More GUI features
+  
+## 8/12/2024
+Tool Bars new now opens a new window, save will save the file, and delete row/add row work accordingly.<br/>
+Drop Down menu and instant click acess instead of needing to double click
+Next Implementation:
+* Data base check for pricing
+* Animation for pressed button
+* Remaining logic for material table

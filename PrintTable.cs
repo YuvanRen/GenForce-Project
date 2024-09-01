@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-
 namespace GenForce
 {
     using System;
@@ -53,6 +46,21 @@ namespace GenForce
             this.pageWidth = this.printDocument.DefaultPageSettings.PrintableArea.Width;
             this.pageHeight = this.printDocument.DefaultPageSettings.PrintableArea.Height;
 
+            // Adjust the width of the first column to fit the longest text
+            float maxTextWidth = 0;
+            using (Graphics g = printDocument.PrinterSettings.CreateMeasurementGraphics())
+            {
+                foreach (DataGridViewRow row in dgv.Rows)
+                {
+                    float textWidth = g.MeasureString(row.Cells[0].Value?.ToString() ?? "", dgv.Font).Width;
+                    if (textWidth > maxTextWidth)
+                    {
+                        maxTextWidth = textWidth;
+                    }
+                }
+            }
+            cellWidth = Math.Max(cellWidth, maxTextWidth + 20); // Add some padding
+
             // Calculate rows per page (excluding header)
             this.rowsPerPage = (int)((pageHeight - topMargin - headerHeight) / cellHeight);
 
@@ -65,6 +73,15 @@ namespace GenForce
             float yPos = topMargin;
             int rowCount = 0;
 
+            // Set up StringFormat for wrapping text
+            StringFormat format = new StringFormat
+            {
+                Alignment = StringAlignment.Near,
+                LineAlignment = StringAlignment.Center,
+                Trimming = StringTrimming.EllipsisCharacter,
+                FormatFlags = StringFormatFlags.LineLimit // Wrap text to fit in the rectangle
+            };
+
             // Print page number
             e.Graphics.DrawString($"Page {currentPage} of {totalPages}",
                 new Font("Arial", 8), Brushes.Black, pageWidth - 100, pageHeight - 25);
@@ -75,7 +92,7 @@ namespace GenForce
                 e.Graphics.FillRectangle(Brushes.LightGray, leftMargin + (i * cellWidth), yPos, cellWidth, headerHeight);
                 e.Graphics.DrawRectangle(Pens.Black, leftMargin + (i * cellWidth), yPos, cellWidth, headerHeight);
                 e.Graphics.DrawString(dgv.Columns[i].HeaderText, new Font("Arial", 10, FontStyle.Bold),
-                    Brushes.Black, new RectangleF(leftMargin + (i * cellWidth), yPos, cellWidth, headerHeight));
+                    Brushes.Black, new RectangleF(leftMargin + (i * cellWidth), yPos, cellWidth, headerHeight), format);
             }
             yPos += headerHeight;
 
@@ -88,11 +105,13 @@ namespace GenForce
                 DataGridViewRow row = dgv.Rows[rowIndex];
                 for (int cellIndex = 0; cellIndex < columnCount; cellIndex++)
                 {
-                    e.Graphics.DrawRectangle(Pens.Black, leftMargin + (cellIndex * cellWidth), yPos, cellWidth, cellHeight);
+                    RectangleF cellBounds = new RectangleF(leftMargin + (cellIndex * cellWidth), yPos, cellWidth, cellHeight);
+                    e.Graphics.DrawRectangle(Pens.Black, cellBounds.Left, cellBounds.Top, cellBounds.Width, cellBounds.Height);
+
                     if (row.Cells[cellIndex].Value != null)
                     {
                         e.Graphics.DrawString(row.Cells[cellIndex].Value.ToString(), dgv.Font, Brushes.Black,
-                            new RectangleF(leftMargin + (cellIndex * cellWidth), yPos, cellWidth, cellHeight));
+                            cellBounds, format);
                     }
                 }
                 yPos += cellHeight;
@@ -113,3 +132,4 @@ namespace GenForce
         }
     }
 }
+

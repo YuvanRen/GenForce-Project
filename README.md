@@ -1,4 +1,7 @@
 # GenForce-Project TimeLine
+Genforce-SW is a .NET-based desktop application designed to automate the extraction, calculation, and cost estimation of materials for solar panel projects.<br/>
+By leveraging custom parsing logic and dynamic data handling, the software streamlines the process of managing material quantities, providing users with accurate<br/>
+cost predictions and minimizing manual errors.<br/>
 
 ## 7/29/2024
 1st Table Format (INPUT):
@@ -42,3 +45,8 @@ Next Implementation:
 * Data base check for pricing
 * Animation for pressed button
 * Remaining logic for material table
+
+## 9/4/2024
+Application has been finished, only need to finish merging.<br/>
+Added new tab for results and for prices<br/>
+* No more implementations for now

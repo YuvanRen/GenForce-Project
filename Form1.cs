@@ -14,8 +14,11 @@ namespace GenForce
         public Panel mainPanel;
         public DataGridView inputDataGridView;
         public DataGridView outputDataGridView;
+
         public DataGridView priceDataGridView; // New DataGridView for Pricing Tab
         public DataGridView resultDataGridView; // New for results
+
+
         private MaterialButton addRowButton;
         private MaterialButton parseButton;
         private DataTable inputTable = new DataTable();
@@ -68,6 +71,9 @@ namespace GenForce
             EnableDoubleBuffering(outputDataGridView);
             EnableDoubleBuffering(priceDataGridView);
             EnableDoubleBuffering(resultDataGridView);
+
+            // Enable double buffering on the DataGridView to improve performance
+            EnableDoubleBuffering(outputDataGridView);
         }
 
         private void EnableDoubleBuffering(Control control)
